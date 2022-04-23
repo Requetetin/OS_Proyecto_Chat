@@ -45,6 +45,7 @@ int main(int argc, char const* argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
+    /*//Implementacion de geeks for geeks. Un solo mensaje
     if ((new_socket
          = accept(server_fd, (struct sockaddr*)&address,
                   (socklen_t*)&addrlen))
@@ -56,5 +57,12 @@ int main(int argc, char const* argv[])
     printf("%s\n", buffer);
     send(new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
-    return 0;
+    return 0;*/
+     //Implementacion de medium. Multiple messages
+	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
+		while (recv(new_socket, buffer, 100, 0) > 0) {
+			printf("Message received: %s", buffer);
+		}
+		exit(0);
+	}
 }

@@ -27,9 +27,17 @@ int main (int argc, char const* argv[]) {
 		printf("\nConnection Failed\n");
 		return -1;
 	}
+	/* //Implementation by geeks for geeks, single message
 	send(sock, hello, strlen(hello), 0);
 	printf("Hello message sent\n");
 	valread = read(sock, buffer, 1024);
 	printf("%s\n", buffer);
 	return 0;
+	*/
+	// Implementation by medium. Multiple messages
+	while (1) {
+		printf("Enter a message: ");
+		fgets(buffer, 100, stdin);
+		send(sock, buffer, strlen(hello), 0);
+	}
 }
