@@ -60,6 +60,8 @@ int main(int argc, char const* argv[])
     return 0;*/
      //Implementacion de medium. Multiple messages
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
+		recv(new_socket, buffer, 100, 0);
+		printf("Message connect: %s", buffer);
 		while (recv(new_socket, buffer, 100, 0) > 0) {
 			printf("Message received: %s", buffer);
 		}
