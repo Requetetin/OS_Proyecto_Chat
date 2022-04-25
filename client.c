@@ -15,7 +15,7 @@ int main (int argc, char const* argv[]) {
 	char init_connect[1024];
 	char* user = "Martin";
 	time_t curr_time = time(NULL);
-	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [%s, %s]}", asctime(gmtime(&curr_time)), user);
+	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [\"%s\", \"%s\"]}", asctime(gmtime(&curr_time)), user);
 	
 	
 	char buffer[1024] = { 0 };
