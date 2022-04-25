@@ -10,10 +10,14 @@ int main (int argc, char const* argv[]) {
 	int sock = 0, valread;
 	struct sockaddr_in serv_addr;
 	char* hello = "Hello from client";
+	
+	//Initial message
 	char init_connect[1024];
 	char* user = "Martin";
 	time_t curr_time = time(NULL);
-	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [connect_time: %s, user_id: %s]}", asctime(gmtime(&curr_time)), user);
+	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [%s, %s]}", asctime(gmtime(&curr_time)), user);
+	
+	
 	char buffer[1024] = { 0 };
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("\n Socket creation error\n");
