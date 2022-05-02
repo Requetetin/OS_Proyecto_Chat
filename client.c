@@ -25,6 +25,9 @@ void* inputs() {
 
 void* outputs() {
 	char buffer[1024] = {};
+	time_t hour;
+	char message[1024];
+	char* recipient = "all";
 	
 	while (1) {
 		printf("Enter a message: ");
@@ -32,9 +35,14 @@ void* outputs() {
 		trim_string(buffer, 1024);
 		if (strcmp(buffer, "exit") == 0) {
 			exit_flag = 1;
+			char exit_connect[1024] = "{request: END_CONEX}";
+			send(sock, exit_connect, sizeof(buffer), 0);
 			break;
 		} else {
-			send(sock, buffer, sizeof(buffer), 0);
+			hour = time(NULL);
+			struct tm *ptm = localtime(&hour);
+			snprintf(message, sizeof(message), "{request: POST_CHAT, body: [%s, %s, delivered at: \"%02d:%02d\", to: \"%s\"]}", buffer, user, ptm->tm_hour, ptm->tm_min, recipient);
+			send(sock, message, sizeof(message), 0);
 		}
 	}
 }
