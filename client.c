@@ -43,6 +43,7 @@ void* outputs() {
 			struct tm *ptm = localtime(&hour);
 			snprintf(message, sizeof(message), "{request: POST_CHAT, body: [%s, %s, delivered at: \"%02d:%02d\", to: \"%s\"]}", buffer, user, ptm->tm_hour, ptm->tm_min, recipient);
 			send(sock, message, sizeof(message), 0);
+			printf("sent");
 		}
 	}
 }

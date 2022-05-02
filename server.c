@@ -9,6 +9,7 @@
 #define PORT 8080
 int main(int argc, char const* argv[])
 {
+	setbuf(stdout, NULL);
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
@@ -60,10 +61,10 @@ int main(int argc, char const* argv[])
     return 0;*/
      //Implementacion de medium. Multiple messages
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
-		recv(new_socket, buffer, 1024, 0);
+		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
-		while (recv(new_socket, buffer, 1024, 0) > 0) {
-			printf("Message received: %s", buffer);
+		while (read(new_socket, buffer, 1024) > 0) {
+			printf("Message received: %s\n", buffer);
 		}
 		exit(0);
 	}
