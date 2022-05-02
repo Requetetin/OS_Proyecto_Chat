@@ -4,30 +4,69 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <time.h>
-#define PORT 8080
+#include <pthread.h>
 
-int main (int argc, char const* argv[]) {
-	int sock = 0, valread;
+int sock, exit_flag;
+char* user;
+
+void trim_string(char* arr, int length) {
+	int i;
+	for (i=0; i<length; i++){
+		if(arr[i] == '\n') {
+			arr[i] = '\0';
+			break;
+		}
+	}
+}
+
+void* inputs() {
+
+}
+
+void* outputs() {
+	char buffer[1024] = {};
+	
+	while (1) {
+		printf("Enter a message: ");
+		fgets(buffer, 1024, stdin);
+		trim_string(buffer, 1024);
+		if (strcmp(buffer, "exit") == 0) {
+			exit_flag = 1;
+			break;
+		} else {
+			send(sock, buffer, sizeof(buffer), 0);
+		}
+	}
+}
+
+int main (int argc, char* argv[]) {
+	//Get the input values
+	user = argv[1];
+	char* ip = argv[2];
+	char* ports = argv[3];
+	int port = strtol(ports, NULL, 0);
+	
 	struct sockaddr_in serv_addr;
-	char* hello = "Hello from client";
+	exit_flag = 0;
 	
 	//Initial message
 	char init_connect[1024];
-	char* user = "Martin";
 	time_t curr_time = time(NULL);
-	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [\"%s\", \"%s\"]}", asctime(gmtime(&curr_time)), user);
+	struct tm *ptm = localtime(&curr_time);
+	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [\"%s\", \"%02d-%02d-%d %02d:%02d:%02d\"]}", user, ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
 	
 	
 	char buffer[1024] = { 0 };
-	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock < 0) {
 		printf("\n Socket creation error\n");
 		return -1;
 	}
 	
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT);
+	serv_addr.sin_port = htons(port);
 	
-	if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+	if (inet_pton(AF_INET, ip, &serv_addr.sin_addr) <= 0) {
 		printf("\nInvalid address / Address not supported\n");
 		return -1;
 	}
@@ -44,10 +83,18 @@ int main (int argc, char const* argv[]) {
 	return 0;
 	*/
 	// Implementation by medium. Multiple messages
+	pthread_t send_thread, rec_thread;
 	send(sock, init_connect, strlen(init_connect), 0);
-	while (1) {
-		printf("Enter a message: ");
-		fgets(buffer, 100, stdin);
-		send(sock, buffer, strlen(hello), 0);
+	pthread_create(&send_thread, NULL, inputs, NULL);
+	pthread_join(send_thread, NULL);
+	pthread_create(&rec_thread, NULL, outputs, NULL);
+	pthread_join(rec_thread, NULL);
+	while(1){
+		if (exit_flag) {
+			printf("Bye\n");
+			break;
+		}
 	}
+	close(sock);
 }
+
