@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -19,11 +20,11 @@ void trim_string(char* arr, int length) {
 	}
 }
 
-void* inputs() {
+void* inputs(void* args) {
 
 }
 
-void* outputs() {
+void* outputs(void* args) {
 	char buffer[1024] = {};
 	time_t hour;
 	char message[1024];
@@ -49,11 +50,12 @@ void* outputs() {
 }
 
 int main (int argc, char* argv[]) {
+	setbuf(stdout, NULL);
 	//Get the input values
 	user = argv[1];
 	char* ip = argv[2];
 	char* ports = argv[3];
-	int port = strtol(ports, NULL, 0);
+	int port = atoi(ports);
 	
 	struct sockaddr_in serv_addr;
 	exit_flag = 0;
@@ -62,7 +64,7 @@ int main (int argc, char* argv[]) {
 	char init_connect[1024];
 	time_t curr_time = time(NULL);
 	struct tm *ptm = localtime(&curr_time);
-	snprintf(init_connect, sizeof(init_connect), "{request: INIT_CONEX, body: [\"%s\", \"%02d-%02d-%d %02d:%02d:%02d\"]}", user, ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+	snprintf(init_connect, sizeof(init_connect), "{\"request\": \"INIT_CONEX\", \"body\": [\"%s\", \"%02d-%02d-%d %02d:%02d:%02d\"]}", user, ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
 	
 	
 	char buffer[1024] = { 0 };
