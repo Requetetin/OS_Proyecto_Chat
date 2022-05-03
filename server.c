@@ -29,7 +29,7 @@ int main(int argc, char const* argv[])
                    SO_REUSEADDR | SO_REUSEPORT, &opt,
                    sizeof(opt))) {
         perror("setsockopt");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); 
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
@@ -60,6 +60,7 @@ int main(int argc, char const* argv[])
     printf("Hello message sent\n");
     return 0;*/
      //Implementacion de medium. Multiple messages
+    printf("Hello message sent\n");
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
