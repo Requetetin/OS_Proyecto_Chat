@@ -7,8 +7,6 @@
 #include <time.h>
 #include <pthread.h>
 #include <string>
-#include <iostream>
-#include <atomic>
 
 #include "json.hpp"
 #include <iomanip>
@@ -32,29 +30,37 @@ void trim_string(char* arr, int length) {
 	}
 }
 
+void getChats() {
+	char request_chat[1024];
+	snprintf(request_chat, sizeof(request_chat), "{\"request\": \"GET_CHAT\", \"body\": \"%s\"}", recipient.c_str());
+	send(sock, request_chat, sizeof(request_chat), 0);
+	read(sock, response, 1024);
+	json j_response = json::parse(response);
+}
+
 void* inputs(void* args) {
 	json j_response;
 	while (end_flag) {
-		recv(sock, response, 1024, 0);
+		read(sock, response, 1024);
 		j_response = json::parse(response);
 		if (j_response["response"] == "NEW_MESSAGE") {
 			printf("%s [%s]: %s", to_string(j_response["body"][2]).c_str(), to_string(j_response["body"][1]).c_str(), to_string(j_response["body"][0]).c_str());
 		} 
 	}
+	pthread_exit(NULL);
 }
 
 void* outputs(void* args) {
 	char buffer[1024] = {};
 	time_t hour;
 	char message[1024];
-	cin.clear();
 	while (1) {
 		printf("Enter a message: ");
 		fgets(buffer, 1024, stdin);
 		trim_string(buffer, 1024);
 		if (strcmp(buffer, "back") == 0) {
 			end_flag = 0;
-			pthread_cancel(rec_thread);
+			pthread_cancel(send_thread);
 			break;
 		} else {
 			hour = time(NULL);
@@ -68,9 +74,11 @@ void* outputs(void* args) {
 
 void startThreads() {
 	end_flag = 1;
+	getChats();
 	pthread_create(&send_thread, NULL, inputs, NULL);
 	pthread_create(&rec_thread, NULL, outputs, NULL);
 	pthread_join(send_thread, NULL);
+	pthread_join(rec_thread, NULL);
 }
 
 void requestUsers() {
