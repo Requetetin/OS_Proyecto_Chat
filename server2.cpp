@@ -11,9 +11,9 @@
 
 #define messagescount 100 
 #define clientscount 10
-//#include "json.hpp"
+#include "json.hpp"
 #include <iomanip>
-//using json = nlohmann::json;
+using json = nlohmann::json;
 
 //using namespace std;
 
@@ -108,11 +108,11 @@ int main(int argc, char const* argv[])
 		//json j_request;
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
-            // j_request = json::parse(buffer);
-            // if (j_request["request"] == "POST_CHAT") {
-            //     std::cout<<"Nuevo mensaje recivido por el servidor" <<std::endl;
+            j_request = json::parse(buffer);
+            if (j_request["request"] == "POST_CHAT") {
+                std::cout<<"Nuevo mensaje recivido por el servidor" <<std::endl;
 
-            // }
+            }
 		}
 		exit(0);
 	}
