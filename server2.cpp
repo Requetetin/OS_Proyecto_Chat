@@ -131,6 +131,17 @@ int main(int argc, char const* argv[])
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
+                //al mismo tiempo de beri enviarle al resto de clientes NEW MESSAGE
+
+
+            }
+            //manejar la solicitud de actualizar el estaod de un cliente
+            if (j_request["request"] == "PUT_STATUS") {
+                cout<<"Cambiar estado a " << j_request["body"]<< endl;
+               
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
+                send(new_socket, response, sizeof(response), 0);
             }
 
 		}
