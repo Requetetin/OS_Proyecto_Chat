@@ -49,15 +49,22 @@ void changeStatus(int id, int status ){
 void printClients(){    
     for (int j=0; j<clientscount;j++){
         if( clients_list[j].name != ""){
-        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;}
+        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;
+        
     }
+    } 
 }
 
-void printMessages(){    
+string printMessages(){
+    string concatenate;
+    concatenate = "[" ;   
     for (int j=0; j<messagescount;j++){
         if( messages_list[j].from!= ""){
-        cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;}
+        cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;
+        concatenate = concatenate + "["+ messages_list[j].message+ ","+ messages_list[j].from+"," +messages_list[j].delivered +"]";
     }
+    } concatenate = concatenate+ "]";
+    return concatenate;
 }
 
 
@@ -187,7 +194,7 @@ int main(int argc , char *argv[])
             j_request = json::parse(buffer);
             cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
             char response[1024];
-            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": \"200\" }");
+            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": 200 }");
             cout<<  "ESTO RESPONDIO EL SERVIDOR: " <<response <<endl;
             send(new_socket, response, sizeof(response), 0);
             int ix = getNextClientIndex();
@@ -255,7 +262,8 @@ int main(int argc , char *argv[])
 
                         }
                     char response[1024];
-                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+                    string messages = printMessages();
+                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": %s }", messages.c_str());
                     send(new_socket, response, sizeof(response), 0);
 
                     }
