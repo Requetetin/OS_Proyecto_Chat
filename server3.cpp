@@ -12,10 +12,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include "json.hpp"
+#include <iomanip>
+using json = nlohmann::json;
+using namespace std;
+
+
     
 #define TRUE 1
 #define FALSE 0
-#define PORT 8888
+#define PORT 8080
     
 int main(int argc , char *argv[])
 {
@@ -141,6 +147,11 @@ int main(int argc , char *argv[])
                 if( client_socket[i] == 0 )
                 {
                     client_socket[i] = new_socket;
+                    read(new_socket, buffer, 1024);
+                    printf("Message connect: %s", buffer);
+                    json j_request;
+                    j_request = json::parse(buffer);
+                    cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
                     printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
@@ -169,6 +180,7 @@ int main(int argc , char *argv[])
                     close( sd );
                     client_socket[i] = 0;
                 }
+
                     
                 //Echo back the message that came in
                 else
