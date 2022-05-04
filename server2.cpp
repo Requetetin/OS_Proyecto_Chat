@@ -15,7 +15,7 @@
 #include <iomanip>
 using json = nlohmann::json;
 
-//using namespace std;
+using namespace std;
 
 struct client{
     int id;
@@ -24,7 +24,7 @@ struct client{
 };
 
 struct message {
-    char delivered[10] 
+    char delivered[10] ;
     char from[100];
     char to[100];
     char message[1024];
@@ -35,7 +35,7 @@ client clients_list[clientscount];
 message messages_list[messagescount];
 
 void changeStatus(int id, int status ){
-    std::cout<<"Cambiare el status del cliente "<<id<< " a "<<status<< std::endl;
+    cout<<"Cambiare el status del cliente "<<id<< " a "<<status<< endl;
     clients_list[id].status = status;
 
 }
@@ -43,7 +43,7 @@ void changeStatus(int id, int status ){
 void printClients(){    
     for (int j=0; j<clientscount;j++){
         if( strcmp("", clients_list[j].name) !=0){
-        std::cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<std::endl;}
+        cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<endl;}
     }
 }
 //Sirve para saber cual es el siguiente espacio disponible para mensajes 
@@ -106,9 +106,9 @@ int main(int argc, char const* argv[])
             //MAneja la respuesta de solicitar chats 
             if (j_request["request"] == "GET_CHAT") {
                 if(j_request["body"] =="all"){
-                    std::cout<<"Mostrar chat general" <<std::endl;
+                    cout<<"Mostrar chat general" <<endl;
                 } else {
-                    std::cout<<"Mostrar chat de "<<j_request["body"] <<std::endl;
+                    cout<<"Mostrar chat de "<<j_request["body"] <<endl;
 
                 }
             char response[1024];
@@ -119,11 +119,11 @@ int main(int argc, char const* argv[])
 
             //Manejar la solicitud de postear un mensaje 
             if (j_request["request"] == "POST_CHAT") {
-                std::cout<<"POSTEAR en chat general" << j_request["body"]<< std::endl;
+                cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
                // if(j_request["body"])
                 int next;
                 next= getNextMessageIndex();
-                messages_list[next].message = std::to_string(j_request["body"][0]).c_str();
+                //messages_list[next].message = to_string(j_request["body"][0]).c_str();
                 //messages_list[next].from = j_request["body"][1];
                 //messages_list[next].delivered = j_request["body"][2];
                 //messages_list[next].to = j_request["body"][3];
