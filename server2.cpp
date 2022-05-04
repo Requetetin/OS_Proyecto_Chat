@@ -109,8 +109,15 @@ int main(int argc, char const* argv[])
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
             j_request = json::parse(buffer);
-            if (j_request["request"] == "POST_CHAT") {
-                std::cout<<"Nuevo mensaje recivido por el servidor" <<std::endl;
+            if (j_request["request"] == "GET_CHAT") {
+                if(j_request["body"] =="all"){
+                    std::cout<<"Mostrar chat general" <<std::endl;
+                } else {
+                    std::cout<<"Mostrar chat de "<<j_request["body"] <<std::endl;
+
+                }
+                
+
 
             }
 		}
