@@ -131,7 +131,7 @@ int main(int argc , char *argv[])
             }
             
             //inform user of socket number - used in send and receive commands
-            //printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+            printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
         
             //send new connection greeting message
             if( send(new_socket, message, strlen(message), 0) != strlen(message) )
@@ -152,7 +152,7 @@ int main(int argc , char *argv[])
                     printf("Message connect: %s", buffer);
                     json j_request;
                     j_request = json::parse(buffer);
-                    //std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
+                    std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
                     //printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
