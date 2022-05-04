@@ -1,5 +1,6 @@
 // Server side C/C++ program to demonstrate Socket
 // programming
+#include <iostream>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,8 @@
 #include <unistd.h>
 #define PORT 8080
 
+#define messagescount 100 
+#define clientscount 10
 #include "json.hpp"
 #include <iomanip>
 using json = nlohmann::json;
