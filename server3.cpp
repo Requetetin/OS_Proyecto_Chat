@@ -168,6 +168,7 @@ int main(int argc , char *argv[])
             printf("leyendo input de socket ");
             read( sd , buffer, 1024);
             sd = client_socket[i];
+            json j_request;
             j_request = json::parse(buffer);
             //MAneja la respuesta de solicitar chats 
             if (j_request["request"] == "GET_CHAT") {
