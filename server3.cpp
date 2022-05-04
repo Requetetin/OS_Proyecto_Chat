@@ -15,6 +15,7 @@
 #include "json.hpp"
 #include <iomanip>
 using json = nlohmann::json;
+
 using namespace std;
 
 
@@ -151,7 +152,7 @@ int main(int argc , char *argv[])
                     printf("Message connect: %s", buffer);
                     json j_request;
                     j_request = json::parse(buffer);
-                    std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
+                    //std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
                     printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
