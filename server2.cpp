@@ -1,29 +1,82 @@
 // Server side C/C++ program to demonstrate Socket
 // programming
+#include <iostream>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <sstream>
 #define PORT 8080
 
+#define messagescount 100 
+#define clientscount 10
+#include "json.hpp"
+#include <iomanip>
+using json = nlohmann::json;
+
+using namespace std;
+
 struct client{
-    int id;
-    char name[25];
+    string name;
+    int status;
 };
 
 struct message {
-    bool isprivate; 
-    char sender[100];
-    char receiver[100];
-    char content[1024];
+    string delivered;
+    string from;
+    string to;
+    string message;
 
 };
 
-client clients_list[10];
-message messages_List[100];
+client clients_list[clientscount];
+message messages_list[messagescount];
 
+void changeStatus(int id, int status ){
+    cout<<"Cambiare el status del cliente "<<id<< " a "<<status<< endl;
+    clients_list[id].status = status;
+
+}
+
+void printClients(){    
+    for (int j=0; j<clientscount;j++){
+        if( clients_list[j].name != ""){
+        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;}
+    }
+}
+
+void printMessages(){    
+    for (int j=0; j<messagescount;j++){
+        if( messages_list[j].from!= ""){
+        cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;}
+    }
+}
+
+
+
+
+//Sirve para saber cual es el siguiente espacio disponible para mensajes 
+int getNextMessageIndex(){
+    for (int j=0; j<messagescount;j++){
+        if(messages_list[j].from ==""){
+            return j;
+        }
+    }
+    return 0;
+
+}
+
+//Sirve para saber cual es el siguiente espacio disponible para clientes 
+int getNextClientIndex(){
+    for (int j=0; j<clientscount;j++){
+        if(clients_list[j].name == ""){
+            return j;
+        }
+    }
+    return 0;
+}
 
 int main(int argc, char const* argv[])
 {
@@ -64,28 +117,79 @@ int main(int argc, char const* argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    /*//Implementacion de geeks for geeks. Un solo mensaje
-    if ((new_socket
-         = accept(server_fd, (struct sockaddr*)&address,
-                  (socklen_t*)&addrlen))
-        < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
-    valread = read(new_socket, buffer, 1024);
-    printf("%s\n", buffer);
-    send(new_socket, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    return 0;*/
-     //Implementacion de medium. Multiple messages
-    //printf("Hello message sent\n");
+
+    //registro de nuevo usuario
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
-		
+		json j_request;
+        j_request = json::parse(buffer);
+        cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+        int ix = getNextClientIndex();
+        clients_list[ix].name = j_request["body"][1];
+        clients_list[ix].status = 1;
+        printClients();
+
 
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
+            j_request = json::parse(buffer);
+            //MAneja la respuesta de solicitar chats 
+            if (j_request["request"] == "GET_CHAT") {
+                if(j_request["body"] =="all"){
+                    cout<<"Mostrar chat general" <<endl;
+                } else {
+                    cout<<"Mostrar chat de "<<j_request["body"] <<endl;
+
+                }
+            char response[1024];
+            snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+            send(new_socket, response, sizeof(response), 0);
+
+            }
+
+            //Manejar la solicitud de postear un mensaje 
+            if (j_request["request"] == "POST_CHAT") {
+                cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
+               // if(j_request["body"])
+                int next;
+                next= getNextMessageIndex();
+                string bodymessage = to_string(j_request["body"][0]);
+                char bodymessagechar[bodymessage.length()+1];
+
+                //lo guarda con todos los mensajes
+                messages_list[next].message = j_request["body"][0];
+                messages_list[next].from = j_request["body"][1];
+                messages_list[next].delivered = j_request["body"][2];
+                messages_list[next].to = j_request["body"][3];
+                printMessages();
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
+                send(new_socket, response, sizeof(response), 0);
+                //al mismo tiempo deberia enviarle al resto de clientes NEW MESSAGE
+                
+
+
+            }
+            //manejar la solicitud de actualizar el estado de un cliente
+            if (j_request["request"] == "PUT_STATUS") {
+                cout<<"Cambiar estado a " << j_request["body"]<< endl;
+                changeStatus(j_request["body"]);
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
+                send(new_socket, response, sizeof(response), 0);
+            }
+
+
+            //manejar solicitud de estado de usuarios
+            if (j_request["request"] == "GET_USER") {
+                cout<<"Mostrar usuario " << j_request["body"]<< endl;
+                
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"GET_USER\",\"code\": \"200\" , \"body\": \"\" }");
+                send(new_socket, response, sizeof(response), 0);
+            }
+
 		}
 		exit(0);
 	}
