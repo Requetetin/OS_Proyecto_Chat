@@ -163,8 +163,25 @@ int main(int argc , char *argv[])
             
         //else its some IO operation on some other socket
         for (i = 0; i < max_clients; i++)
-        {
+        {   
+            //Lectura de get chat
+            printf("leyendo input de socket ");
+            read( sd , buffer, 1024);
             sd = client_socket[i];
+            j_request = json::parse(buffer);
+            //MAneja la respuesta de solicitar chats 
+            if (j_request["request"] == "GET_CHAT") {
+                if(j_request["body"] =="all"){
+                    cout<<"Mostrar chat general" <<endl;
+                } else {
+                    cout<<"Mostrar chat de "<<j_request["body"] <<endl;
+
+                }
+            char response[1024];
+            snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+            send(new_socket, response, sizeof(response), 0);
+
+            }
                 
             if (FD_ISSET( sd , &readfds))
             {
