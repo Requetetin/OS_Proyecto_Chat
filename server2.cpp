@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <sstream>
 #define PORT 8080
 
 #define messagescount 100 
@@ -117,14 +118,15 @@ int main(int argc, char const* argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    
+
+    //registro de nuevo usuario
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
 		json j_request;
         j_request = json::parse(buffer);
         cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-
+        clients_list[getNextClientIndex()].name = to_string(j_response["body"][1]).c_str();
 
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
