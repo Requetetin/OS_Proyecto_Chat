@@ -93,9 +93,7 @@ int main(int argc , char *argv[])
     int max_sd;  
     struct sockaddr_in address;  
          
-    char buffer[1025];  //data buffer of 1K 
-         
-    //set of socket descriptors 
+    char buffer[1025];
     fd_set readfds;  
          
     //a message 
@@ -107,15 +105,14 @@ int main(int argc , char *argv[])
         client_socket[i] = 0;  
     }  
          
-    //create a master socket 
+    //crea socket master para poder emparentar el resto
     if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0)  
     {  
         perror("socket failed");  
         exit(EXIT_FAILURE);  
     }  
      
-    //set master socket to allow multiple connections , 
-    //this is just a good habit, it will work without this 
+    
     if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, 
           sizeof(opt)) < 0 )  
     {  
@@ -128,15 +125,14 @@ int main(int argc , char *argv[])
     address.sin_addr.s_addr = INADDR_ANY;  
     address.sin_port = htons( PORT );  
          
-    //bind the socket to localhost port 8888 
+    //bind-ea el socket al puerto 88888888 
     if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0)  
     {  
         perror("bind failed");  
         exit(EXIT_FAILURE);  
     }  
     
-         
-    //try to specify maximum of 3 pending connections for the master socket 
+    
     if (listen(master_socket, 3) < 0)  
     {  
         perror("listen");  
@@ -157,11 +153,11 @@ int main(int argc , char *argv[])
         for ( i = 0 ; i < max_clients ; i++)  
         {  
             sd = client_socket[i];     
-            //if valid socket descriptor then add to read list 
+            //agregar a lista si tiene file descriptor valido 
             if(sd > 0)  
                 FD_SET( sd , &readfds);  
                  
-            //highest file descriptor number, need it for the select function 
+            //max socket sirve para llevar inidce de cuantos sockets hay registrados 
             if(sd > max_sd)  
                 max_sd = sd;  
         }  
@@ -183,13 +179,21 @@ int main(int argc , char *argv[])
                 exit(EXIT_FAILURE);  
             }  
              
-            //inform user of socket number - used in send and receive commands 
+            //definicion de ip del cliente
             printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));  
             read(new_socket, buffer, 1024);
             printf("Message connect: %s", buffer);
             json j_request;
             j_request = json::parse(buffer);
             cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+            char response[1024];
+            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": \"200\" }");
+            cout<<  "ESTO RESPONDIO EL SERVIDOR: " <<response <<endl;
+            send(new_socket, response, sizeof(response), 0);
+            int ix = getNextClientIndex();
+            clients_list[ix].name = j_request["body"][1];
+            clients_list[ix].status = 1;
+            printClients();
             
             //opcional
             if( send(new_socket, message, strlen(message), 0) != strlen(message) )  
@@ -206,7 +210,7 @@ int main(int argc , char *argv[])
                 if( client_socket[i] == 0 )  
                 {  
                     client_socket[i] = new_socket;  
-                    //printf("Adding to list of sockets as %d\n" , i);  
+                    
                          
                     break;  
                 }  
