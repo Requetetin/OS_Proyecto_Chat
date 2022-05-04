@@ -148,7 +148,7 @@ int main(int argc , char *argv[])
          
     //accept the incoming connection 
     addrlen = sizeof(address);  
-    puts("Waiting for connections ...");  
+    puts("ONLINE ...");  
          
     while(TRUE)  
     {  
@@ -196,7 +196,12 @@ int main(int argc , char *argv[])
              
             //inform user of socket number - used in send and receive commands 
             printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));  
-           
+            read(new_socket, buffer, 1024);
+            printf("Message connect: %s", buffer);
+            json j_request;
+            j_request = json::parse(buffer);
+            cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+            
             //send new connection greeting message 
             if( send(new_socket, message, strlen(message), 0) != strlen(message) )  
             {  
