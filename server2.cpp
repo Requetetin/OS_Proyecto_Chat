@@ -21,6 +21,7 @@ struct client{
     int id;
     char name[25];
     int status;
+    struct sockaddr_in address;
 };
 
 struct message {
@@ -123,7 +124,7 @@ int main(int argc, char const* argv[])
                // if(j_request["body"])
                 int next;
                 next= getNextMessageIndex();
-                //messages_list[next].message = to_string(j_request["body"][0]).c_str();
+                messages_list[next].message = (j_request["body"][0]).c_str();
                 //messages_list[next].from = j_request["body"][1];
                 //messages_list[next].delivered = j_request["body"][2];
                 //messages_list[next].to = j_request["body"][3];
@@ -144,7 +145,7 @@ int main(int argc, char const* argv[])
                 send(new_socket, response, sizeof(response), 0);
             }
 
-            
+
             //manejar solicitud de estado de usuarios
             if (j_request["request"] == "GET_USER") {
                 cout<<"Mostrar usuario " << j_request["body"]<< endl;
