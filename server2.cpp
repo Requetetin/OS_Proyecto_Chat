@@ -62,7 +62,7 @@ void printMessages(){
 //Sirve para saber cual es el siguiente espacio disponible para mensajes 
 int getNextMessageIndex(){
     for (int j=0; j<messagescount;j++){
-        if(messages_list[j].from =""){
+        if(messages_list[j].from ==""){
             return j;
         }
     }
