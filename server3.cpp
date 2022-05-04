@@ -237,9 +237,10 @@ int main(int argc , char *argv[])
                 else 
                 {  
                     
-                    //of the data read 
+                    //Lectura y manejo de solicitudes 
                     cout<<"ESta es la solicitud que esta recibiendo" <<buffer <<endl;
                     //Aqui se deben manejar las solicitudes.
+                    json j_request;
                     j_request = json::parse(buffer);
                     //MAneja la respuesta de solicitar chats 
                     if (j_request["request"] == "GET_CHAT") {
