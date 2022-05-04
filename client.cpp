@@ -8,9 +8,13 @@
 #include <pthread.h>
 #include <string>
 
+#include "json.hpp"
+#include <iomanip>
+using json = nlohmann::json;
+
 using namespace std;
 
-int sock;
+int sock, end_flag;
 char* user;
 pthread_t send_thread, rec_thread;
 string recipient;
@@ -26,6 +30,9 @@ void trim_string(char* arr, int length) {
 }
 
 void* inputs(void* args) {
+	while (end_flag) {
+	
+	}
 	pthread_exit(NULL);
 }
 
@@ -39,6 +46,7 @@ void* outputs(void* args) {
 		fgets(buffer, 1024, stdin);
 		trim_string(buffer, 1024);
 		if (strcmp(buffer, "back") == 0) {
+			end_flag = 0;
 			break;
 		} else {
 			hour = time(NULL);
@@ -51,13 +59,21 @@ void* outputs(void* args) {
 }
 
 void startThreads() {
+	end_flag = 1;
 	pthread_create(&send_thread, NULL, inputs, NULL);
 	pthread_join(send_thread, NULL);
 	pthread_create(&rec_thread, NULL, outputs, NULL);
 	pthread_join(rec_thread, NULL);
 }
 
+void requestUsers() {
+	char request_user[1024];
+	snprintf(request_user, sizeof(request_user), "{\"request\": \"GET_USER\", \"body\": \"%s\"}", recipient.c_str());
+	send(sock, request_user, sizeof(request_user), 0);
+}
+
 int main (int argc, char* argv[]) {
+	end_flag = 0;
 	setbuf(stdout, NULL);
 	//Get the input values
 	user = argv[1];
@@ -133,9 +149,12 @@ int main (int argc, char* argv[]) {
 			snprintf(state_change, sizeof(state_change), "{\"request\": \"PUT_STATUS\", \"body\": \"%d\"}", new_state);
 			send(sock, state_change, sizeof(state_change), 0);
 		} else if (selector_menu == 4) {
-			
+			recipient =  "all";
+			requestUsers();
 		} else if (selector_menu == 5) {
-		
+			printf("Con que usuario se desea comunicar? ");
+			scanf("%s", recipient.c_str());
+			requestUsers();
 		} else if (selector_menu == 6) {
 		
 		} else if (selector_menu == 7) {
