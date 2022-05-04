@@ -37,7 +37,6 @@ void getChats() {
 	send(sock, request_chat, sizeof(request_chat), 0);
 	bzero(response, 1024);
 	read(sock, response, 1024);
-	printf("%s\n", response);
 	json j_response = json::parse(response);
 	vector<vector<string>> messages = j_response["body"];
 	for (int i=0; i<messages.size(); i++) {
@@ -50,11 +49,12 @@ void* inputs(void* args) {
 	while (end_flag) {
 		bzero(response, 1024);
 		read(sock, response, 1024);
-		printf("%s\n", response);
 		j_response = json::parse(response);
 		if (j_response["response"] == "NEW_MESSAGE") {
 			printf("%s [%s]: %s", to_string(j_response["body"][2]).c_str(), to_string(j_response["body"][1]).c_str(), to_string(j_response["body"][0]).c_str());
-		} 
+		} else if (j_response["response"] == "POST_CHAT") {
+			continue;
+		}
 	}
 	pthread_exit(NULL);
 }
@@ -78,9 +78,6 @@ void* outputs(void* args) {
 			struct tm *ptm = localtime(&hour);
 			snprintf(message, sizeof(message), "{\"request\": \"POST_CHAT\", \"body\": [\"%s\", \"%s\", \"%02d:%02d\", \"%s\"]}", buffer, user, ptm->tm_hour, ptm->tm_min, recipient.c_str());
 			send(sock, message, sizeof(message), 0);
-			bzero(response, 1024);
-			read(sock, response, 1024);
-			printf("%s\n", response);
 		}
 	}
 	pthread_exit(NULL);
@@ -101,7 +98,6 @@ void requestUsers() {
 	send(sock, request_user, sizeof(request_user), 0);
 	bzero(response, 1024);
 	read(sock, response, 1024);
-	printf("%s\n", response);
 	json j_response = json::parse(response);
 	int code;
 	code = atoi(to_string(j_response["code"]).c_str());
@@ -180,7 +176,6 @@ int main (int argc, char* argv[]) {
 	send(sock, init_connect, strlen(init_connect), 0);
 	bzero(response, 1024);
 	read(sock, response, 1024);
-	printf("%s\n", response);
 	json j_response = json::parse(response);
 	int code = atoi(to_string(j_response["code"]).c_str());
 	if (code == 200) {	
@@ -224,7 +219,6 @@ int main (int argc, char* argv[]) {
 			send(sock, state_change, sizeof(state_change), 0);
 			bzero(response, 1024);
 			read(sock, response, 1024);
-			printf("%s\n", response);
 		} else if (selector_menu == 4) {
 			recipient =  "all";
 			requestUsers();
