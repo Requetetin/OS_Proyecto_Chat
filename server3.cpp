@@ -24,6 +24,69 @@ using namespace std;
 #define TRUE 1
 #define FALSE 0
 #define PORT 8888
+
+struct client{
+    string name;
+    int status;
+};
+
+struct message {
+    string delivered;
+    string from;
+    string to;
+    string message;
+
+};
+
+client clients_list[clientscount];
+message messages_list[messagescount];
+
+void changeStatus(int id, int status ){
+    cout<<"Cambiare el status del cliente "<<id<< " a "<<status<< endl;
+    clients_list[id].status = status;
+
+}
+
+void printClients(){    
+    for (int j=0; j<clientscount;j++){
+        if( clients_list[j].name != ""){
+        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;}
+    }
+}
+
+void printMessages(){    
+    for (int j=0; j<messagescount;j++){
+        if( messages_list[j].from!= ""){
+        cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;}
+    }
+}
+
+
+
+
+//Sirve para saber cual es el siguiente espacio disponible para mensajes 
+int getNextMessageIndex(){
+    for (int j=0; j<messagescount;j++){
+        if(messages_list[j].from ==""){
+            return j;
+        }
+    }
+    return 0;
+
+}
+
+//Sirve para saber cual es el siguiente espacio disponible para clientes 
+int getNextClientIndex(){
+    for (int j=0; j<clientscount;j++){
+        if(clients_list[j].name == ""){
+            return j;
+        }
+    }
+    return 0;
+}
+
+
+
     
 int main(int argc , char *argv[])
 {
@@ -174,11 +237,10 @@ int main(int argc , char *argv[])
                 printf("leyendo input de socket ");
                 //Check if it was for closing , and also read the
                 //incoming message
+                json j_request;
                 if ((valread = read( sd , buffer, 1024)) == 0)
                 {
-                    
                     read( sd , buffer, 1024);
-                    json j_request;
                     j_request = json::parse(buffer);
                     //MAneja la respuesta de solicitar chats 
                     if (j_request["request"] == "GET_CHAT") 
