@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
 #define PORT 8080
@@ -123,10 +123,10 @@ int main(int argc, char const* argv[])
                // if(j_request["body"])
                 int next;
                 next= getNextMessageIndex();
-                messages_list[next].message = j_request["body"][0];
-                messages_list[next].from = j_request["body"][1];
-                messages_list[next].delivered = j_request["body"][2];
-                messages_list[next].to = j_request["body"][3];
+                messages_list[next].message = to_string(to_j_request["body"][0]).c_str();
+                //messages_list[next].from = j_request["body"][1];
+                //messages_list[next].delivered = j_request["body"][2];
+                //messages_list[next].to = j_request["body"][3];
 
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
