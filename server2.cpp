@@ -105,7 +105,7 @@ int main(int argc, char const* argv[])
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
-		
+		json j_request;
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
             j_request = json::parse(buffer);
