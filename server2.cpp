@@ -124,7 +124,7 @@ int main(int argc, char const* argv[])
                // if(j_request["body"])
                 int next;
                 next= getNextMessageIndex();
-                char bodymessage[1024];
+                string bodymessage = to_string(j_request["body"][0]);
                 cout<<"cuerpo del mensaje : "<< j_request["body"][0]<<endl;
                 cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
                 cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
