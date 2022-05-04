@@ -35,7 +35,7 @@ void getChats() {
 	snprintf(request_chat, sizeof(request_chat), "{\"request\": \"GET_CHAT\", \"body\": \"%s\"}", recipient.c_str());
 	send(sock, request_chat, sizeof(request_chat), 0);
 	read(sock, response, 1024);
-	json j_response = json::parse(response);
+	//json j_response = json::parse(response);
 }
 
 void* inputs(void* args) {
