@@ -219,7 +219,7 @@ int main(int argc , char *argv[])
                     json j_request;
                     j_request = json::parse(buffer);
                     cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-                    //printf("Adding to list of sockets as %d\n" , i);
+                    printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
                 }
@@ -237,6 +237,17 @@ int main(int argc , char *argv[])
             if (FD_ISSET( sd , &readfds))
             {   
                 printf("leyendo input de socket ");
+                if ((valread = read( sd , buffer, 1024)) == 0)  
+                {  
+                    //Somebody disconnected , get his details and print 
+                    getpeername(sd , (struct sockaddr*)&address , \
+                        (socklen_t*)&addrlen);  
+                    printf("Host disconnected , ip %s , port %d \n" , 
+                          inet_ntoa(address.sin_addr) , ntohs(address.sin_port));  
+                         
+                    //Close the socket and mark as 0 in list for reuse 
+                    close( sd );  
+                    client_socket[i] = 0; 
                 //Check if it was for closing , and also read the
                 //incoming message
                 // json j_request;
