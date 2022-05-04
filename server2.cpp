@@ -8,9 +8,16 @@
 #include <unistd.h>
 #define PORT 8080
 
+#include "json.hpp"
+#include <iomanip>
+using json = nlohmann::json;
+
+using namespace std;
+
 struct client{
     int id;
     char name[25];
+    int status;
 };
 
 struct message {
@@ -21,8 +28,21 @@ struct message {
 
 };
 
-client clients_list[10];
-message messages_List[100];
+client clients_list[clientscount];
+message messages_list[messagescount];
+
+void changeStatus(int id, int status ){
+    std::cout<<"Cambiare el status del cliente "<<id<< " a "<<status<< std::endl;
+    clients_list[id].status = status;
+
+}
+
+void printClients(){    
+    for (int j=0; j<clientscount;j++){
+        if( strcmp("", clients_list[j].name) !=0){
+        std::cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<std::endl;}
+    }
+}
 
 
 int main(int argc, char const* argv[])
@@ -83,9 +103,12 @@ int main(int argc, char const* argv[])
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
 		
-
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
+           // j_response = json::parse(response);
+           // if (j_response["response"] == "NEW_MESSAGE") {
+
+            //}
 		}
 		exit(0);
 	}
