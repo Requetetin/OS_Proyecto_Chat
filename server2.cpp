@@ -68,6 +68,16 @@ int getNextMessageIndex(){
 
 }
 
+//Sirve para saber cual es el siguiente espacio disponible para clientes 
+int getNextClientIndex(){
+    for (int j=0; j<clientscount;j++){
+        if(strcmp(clients_list[j].name, "")==0){
+            return j;
+        }
+    }
+
+}
+
 int main(int argc, char const* argv[])
 {
 	setbuf(stdout, NULL);
@@ -112,6 +122,10 @@ int main(int argc, char const* argv[])
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
 		json j_request;
+        j_request = json::parse(buffer);
+        cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+
+
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
             j_request = json::parse(buffer);
@@ -142,7 +156,7 @@ int main(int argc, char const* argv[])
                 cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
                 cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
                 cout<<"destinatario del mensaje : "<< j_request["body"][3]<<endl;
-                messages_list[next].message = strcpy(bodymessagechar, bodymessage.c_str());
+                //messages_list[next].message = strcpy(bodymessagechar, bodymessage.c_str());
                 //messages_list[next].from = j_request["body"][1];
                 //messages_list[next].delivered = j_request["body"][2];
                 //messages_list[next].to = j_request["body"][3];
@@ -154,10 +168,10 @@ int main(int argc, char const* argv[])
 
 
             }
-            //manejar la solicitud de actualizar el estaod de un cliente
+            //manejar la solicitud de actualizar el estado de un cliente
             if (j_request["request"] == "PUT_STATUS") {
                 cout<<"Cambiar estado a " << j_request["body"]<< endl;
-               
+                
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
@@ -167,7 +181,7 @@ int main(int argc, char const* argv[])
             //manejar solicitud de estado de usuarios
             if (j_request["request"] == "GET_USER") {
                 cout<<"Mostrar usuario " << j_request["body"]<< endl;
-               
+                
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"GET_USER\",\"code\": \"200\" , \"body\": \"\" }");
                 send(new_socket, response, sizeof(response), 0);
