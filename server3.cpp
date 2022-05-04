@@ -26,6 +26,7 @@ using namespace std;
 #define FALSE 0
 #define PORT 8888
 
+//creo structs para guardar mensajer y clientes
 struct client{
     string name;
     int status;
@@ -92,8 +93,8 @@ int getNextClientIndex(){
 int main(int argc , char *argv[])
 {
     int opt = TRUE;
-    int master_socket , addrlen , new_socket , client_socket[30] ,
-        max_clients = 30 , activity, i , valread , sd;
+    int master_socket , addrlen , new_socket , client_socket[10] ,
+        max_clients = 10 , activity, i , valread , sd;
     int max_sd;
     struct sockaddr_in address;
         
@@ -103,7 +104,7 @@ int main(int argc , char *argv[])
     fd_set readfds;
         
     //a message
-    char *message = "ECHO Daemon v1.0 \r\n";
+    //char *message = "Hola Mundo \r\n";
     
     //initialise all client_socket[] to 0 so not checked
     for (i = 0; i < max_clients; i++)
@@ -198,11 +199,11 @@ int main(int argc , char *argv[])
             //inform user of socket number - used in send and receive commands
             printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
         
-            //send new connection greeting message
-            if( send(new_socket, message, strlen(message), 0) != strlen(message) )
-            {
-                perror("send");
-            }
+            // //send new connection greeting message
+            // if( send(new_socket, message, strlen(message), 0) != strlen(message) )
+            // {
+            //     perror("send");
+            // }
                 
             //puts("Welcome message sent successfully");
                 
@@ -238,48 +239,48 @@ int main(int argc , char *argv[])
                 printf("leyendo input de socket ");
                 //Check if it was for closing , and also read the
                 //incoming message
-                json j_request;
-                if ((valread = read( sd , buffer, 1024)) == 0)
-                {
-                    read( sd , buffer, 1024);
-                    j_request = json::parse(buffer);
-                    //MAneja la respuesta de solicitar chats 
-                    if (j_request["request"] == "GET_CHAT") 
-                    {
-                        if(j_request["body"] =="all"){
-                            cout<<"Mostrar chat general" <<endl;
-                        } else {
-                            cout<<"Mostrar chat de "<<j_request["body"] <<endl;
+                // json j_request;
+                // if ((valread = read( sd , buffer, 1024)) == 0)
+                // {
+                //     read( sd , buffer, 1024);
+                //     j_request = json::parse(buffer);
+                //     //MAneja la respuesta de solicitar chats 
+                //     if (j_request["request"] == "GET_CHAT") 
+                //     {
+                //         if(j_request["body"] =="all"){
+                //             cout<<"Mostrar chat general" <<endl;
+                //         } else {
+                //             cout<<"Mostrar chat de "<<j_request["body"] <<endl;
 
-                                }
-                        char response[1024];
-                        snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
-                        send(new_socket, response, sizeof(response), 0);
+                //                 }
+                //         char response[1024];
+                //         snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+                //         send(new_socket, response, sizeof(response), 0);
 
-                    }
-                }
-                //Manejar la solicitud de postear un mensaje 
-                if (j_request["request"] == "POST_CHAT") 
-                {
-                    cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
-                   // if(j_request["body"])
-                    int next;
-                    next= getNextMessageIndex();
-                    string bodymessage = to_string(j_request["body"][0]);
-                    char bodymessagechar[bodymessage.length()+1];
+                //     }
+                // }
+                // //Manejar la solicitud de postear un mensaje 
+                // if (j_request["request"] == "POST_CHAT") 
+                // {
+                //     cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
+                //    // if(j_request["body"])
+                //     int next;
+                //     next= getNextMessageIndex();
+                //     string bodymessage = to_string(j_request["body"][0]);
+                //     char bodymessagechar[bodymessage.length()+1];
 
-                    //lo guarda con todos los mensajes
-                    messages_list[next].message = j_request["body"][0];
-                    messages_list[next].from = j_request["body"][1];
-                    messages_list[next].delivered = j_request["body"][2];
-                    messages_list[next].to = j_request["body"][3];
-                    printMessages();
-                    char response[1024];
-                    snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
-                    send(new_socket, response, sizeof(response), 0);
+                //     //lo guarda con todos los mensajes
+                //     messages_list[next].message = j_request["body"][0];
+                //     messages_list[next].from = j_request["body"][1];
+                //     messages_list[next].delivered = j_request["body"][2];
+                //     messages_list[next].to = j_request["body"][3];
+                //     printMessages();
+                //     char response[1024];
+                //     snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
+                //     send(new_socket, response, sizeof(response), 0);
                     
                 
-                }
+                // }
 
             }
 
