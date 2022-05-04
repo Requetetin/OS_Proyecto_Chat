@@ -66,6 +66,7 @@ int getNextMessageIndex(){
             return j;
         }
     }
+    return 0;
 
 }
 
@@ -76,7 +77,7 @@ int getNextClientIndex(){
             return j;
         }
     }
-
+    return 0;
 }
 
 int main(int argc, char const* argv[])
@@ -126,7 +127,9 @@ int main(int argc, char const* argv[])
 		json j_request;
         j_request = json::parse(buffer);
         cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-        clients_list[getNextClientIndex()].name = to_string(j_request["body"][1]).c_str();
+        char newuser[25];
+        strncpy(newuser, (j_request["body"][1]).c_str(),(j_request["body"][1]).size())
+        clients_list[getNextClientIndex()].name = newuser;
 
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
