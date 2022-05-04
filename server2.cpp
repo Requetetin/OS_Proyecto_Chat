@@ -127,9 +127,10 @@ int main(int argc, char const* argv[])
 		json j_request;
         j_request = json::parse(buffer);
         cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-        char newuser[25];
-        strncpy(newuser, (j_request["body"][1]).c_str(),(j_request["body"][1]).size())
-        clients_list[getNextClientIndex()].name = newuser;
+        ostringstream ss;
+        ss<<j_request["body"][1];
+        string strOut =ss.str();
+        clients_list[getNextClientIndex()].name = strOut.c_str();
 
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
