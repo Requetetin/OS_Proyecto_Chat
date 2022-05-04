@@ -219,7 +219,7 @@ int main(int argc , char *argv[])
                     json j_request;
                     j_request = json::parse(buffer);
                     cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-                    printf("Adding to list of sockets as %d\n" , i);
+                    //printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
                 }
@@ -237,61 +237,50 @@ int main(int argc , char *argv[])
             if (FD_ISSET( sd , &readfds))
             {   
                 printf("leyendo input de socket ");
-                if ((valread = read( sd , buffer, 1024)) == 0)  
-                {  
-                    //Somebody disconnected , get his details and print 
-                    getpeername(sd , (struct sockaddr*)&address , \
-                        (socklen_t*)&addrlen);  
-                    printf("Host disconnected , ip %s , port %d \n" , 
-                          inet_ntoa(address.sin_addr) , ntohs(address.sin_port));  
-                         
-                    //Close the socket and mark as 0 in list for reuse 
-                    close( sd );  
-                    client_socket[i] = 0; 
                 //Check if it was for closing , and also read the
                 //incoming message
-                // json j_request;
-                // if ((valread = read( sd , buffer, 1024)) == 0)
-                // {
-                //     read( sd , buffer, 1024);
-                //     j_request = json::parse(buffer);
-                //     //MAneja la respuesta de solicitar chats 
-                //     if (j_request["request"] == "GET_CHAT") 
-                //     {
-                //         if(j_request["body"] =="all"){
-                //             cout<<"Mostrar chat general" <<endl;
-                //         } else {
-                //             cout<<"Mostrar chat de "<<j_request["body"] <<endl;
+                json j_request;
+                if ((valread = read( sd , buffer, 1024)) == 0)
+                {
+                    read( sd , buffer, 1024);
+                    j_request = json::parse(buffer);
+                    //MAneja la respuesta de solicitar chats 
+                    if (j_request["request"] == "GET_CHAT") 
+                    {
+                        if(j_request["body"] =="all"){
+                            cout<<"Mostrar chat general" <<endl;
+                        } else {
+                            cout<<"Mostrar chat de "<<j_request["body"] <<endl;
 
-                //                 }
-                //         char response[1024];
-                //         snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
-                //         send(new_socket, response, sizeof(response), 0);
+                                }
+                        char response[1024];
+                        snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+                        send(new_socket, response, sizeof(response), 0);
 
-                //     }
-                // }
-                // //Manejar la solicitud de postear un mensaje 
-                // if (j_request["request"] == "POST_CHAT") 
-                // {
-                //     cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
-                //    // if(j_request["body"])
-                //     int next;
-                //     next= getNextMessageIndex();
-                //     string bodymessage = to_string(j_request["body"][0]);
-                //     char bodymessagechar[bodymessage.length()+1];
+                    }
+                }
+                //Manejar la solicitud de postear un mensaje 
+                if (j_request["request"] == "POST_CHAT") 
+                {
+                    cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
+                   // if(j_request["body"])
+                    int next;
+                    next= getNextMessageIndex();
+                    string bodymessage = to_string(j_request["body"][0]);
+                    char bodymessagechar[bodymessage.length()+1];
 
-                //     //lo guarda con todos los mensajes
-                //     messages_list[next].message = j_request["body"][0];
-                //     messages_list[next].from = j_request["body"][1];
-                //     messages_list[next].delivered = j_request["body"][2];
-                //     messages_list[next].to = j_request["body"][3];
-                //     printMessages();
-                //     char response[1024];
-                //     snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
-                //     send(new_socket, response, sizeof(response), 0);
+                    //lo guarda con todos los mensajes
+                    messages_list[next].message = j_request["body"][0];
+                    messages_list[next].from = j_request["body"][1];
+                    messages_list[next].delivered = j_request["body"][2];
+                    messages_list[next].to = j_request["body"][3];
+                    printMessages();
+                    char response[1024];
+                    snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
+                    send(new_socket, response, sizeof(response), 0);
                     
                 
-                // }
+                }
 
             }
 
