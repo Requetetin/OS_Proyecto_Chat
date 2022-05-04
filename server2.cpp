@@ -125,8 +125,11 @@ int main(int argc, char const* argv[])
                 int next;
                 next= getNextMessageIndex();
                 char bodymessage[1024];
-                snprintf(bodymessage, sizeof(bodymessage), j_request["body"][0]);
-                messages_list[next].message = bodymessage;
+                cout<<"cuerpo del mensaje : "<< j_request["body"][0]<<endl;
+                cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
+                cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
+                cout<<"destinatario del mensaje : "<< j_request["body"][3]<<endl;
+                //messages_list[next].message = bodymessage;
                 //messages_list[next].from = j_request["body"][1];
                 //messages_list[next].delivered = j_request["body"][2];
                 //messages_list[next].to = j_request["body"][3];
