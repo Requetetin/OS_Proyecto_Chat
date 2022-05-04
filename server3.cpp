@@ -186,6 +186,9 @@ int main(int argc , char *argv[])
             json j_request;
             j_request = json::parse(buffer);
             cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+            char response[1024];
+            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": \"200\" }");
+            send(new_socket, response, sizeof(response), 0);
             int ix = getNextClientIndex();
             clients_list[ix].name = j_request["body"][1];
             clients_list[ix].status = 1;
@@ -206,7 +209,7 @@ int main(int argc , char *argv[])
                 if( client_socket[i] == 0 )  
                 {  
                     client_socket[i] = new_socket;  
-                    //printf("Adding to list of sockets as %d\n" , i);  
+                    
                          
                     break;  
                 }  
