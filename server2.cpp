@@ -157,10 +157,7 @@ int main(int argc, char const* argv[])
                 string bodymessage = to_string(j_request["body"][0]);
                 char bodymessagechar[bodymessage.length()+1];
 
-                cout<<"cuerpo del mensaje : "<< j_request["body"][0]<<endl;
-                cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
-                cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
-                cout<<"destinatario del mensaje : "<< j_request["body"][3]<<endl;
+                //lo guarda con todos los mensajes
                 messages_list[next].message = j_request["body"][0];
                 messages_list[next].from = j_request["body"][1];
                 messages_list[next].delivered = j_request["body"][2];
@@ -169,14 +166,15 @@ int main(int argc, char const* argv[])
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
-                //al mismo tiempo de beri enviarle al resto de clientes NEW MESSAGE
+                //al mismo tiempo deberia enviarle al resto de clientes NEW MESSAGE
+                
 
 
             }
             //manejar la solicitud de actualizar el estado de un cliente
             if (j_request["request"] == "PUT_STATUS") {
                 cout<<"Cambiar estado a " << j_request["body"]<< endl;
-                
+                changeStatus(j_request["body"]);
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
