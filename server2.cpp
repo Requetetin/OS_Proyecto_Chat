@@ -108,10 +108,11 @@ int main(int argc, char const* argv[])
 		
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
-           // j_response = json::parse(response);
-           // if (j_response["response"] == "NEW_MESSAGE") {
+            j_request = json::parse(buffer);
+            if (j_request["request"] == "POST_CHAT") {
+                std::cout<<"Nuevo mensaje recivido por el servidor" <<std::endl;
 
-            //}
+            }
 		}
 		exit(0);
 	}
