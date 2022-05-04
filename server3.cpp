@@ -240,6 +240,62 @@ int main(int argc , char *argv[])
                     //of the data read 
                     cout<<"ESta es la solicitud que esta recibiendo" <<buffer <<endl;
                     //Aqui se deben manejar las solicitudes.
+                    j_request = json::parse(buffer);
+                    //MAneja la respuesta de solicitar chats 
+                    if (j_request["request"] == "GET_CHAT") {
+                        if(j_request["body"] =="all"){
+                            cout<<"Mostrar chat general" <<endl;
+                        } else {
+                            cout<<"Mostrar chat de "<<j_request["body"] <<endl;
+
+                        }
+                    char response[1024];
+                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+                    send(new_socket, response, sizeof(response), 0);
+
+                    }
+
+                    //Manejar la solicitud de postear un mensaje 
+                    if (j_request["request"] == "POST_CHAT") {
+                        cout<<"POSTEAR en chat general" << j_request["body"]<< endl;
+                       // if(j_request["body"])
+                        int next;
+                        next= getNextMessageIndex();
+                        string bodymessage = to_string(j_request["body"][0]);
+                        char bodymessagechar[bodymessage.length()+1];
+
+                        //lo guarda con todos los mensajes
+                        messages_list[next].message = j_request["body"][0];
+                        messages_list[next].from = j_request["body"][1];
+                        messages_list[next].delivered = j_request["body"][2];
+                        messages_list[next].to = j_request["body"][3];
+                        printMessages();
+                        char response[1024];
+                        snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
+                        send(new_socket, response, sizeof(response), 0);
+                        //al mismo tiempo deberia enviarle al resto de clientes NEW MESSAGE
+                        
+
+
+                    }
+                    //manejar la solicitud de actualizar el estado de un cliente
+                    if (j_request["request"] == "PUT_STATUS") {
+                        cout<<"Cambiar estado a " << j_request["body"]<< endl;
+                        changeStatus(j_request["body"]);
+                        char response[1024];
+                        snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
+                        send(new_socket, response, sizeof(response), 0);
+                    }
+
+
+                    //manejar solicitud de estado de usuarios
+                    if (j_request["request"] == "GET_USER") {
+                        cout<<"Mostrar usuario " << j_request["body"]<< endl;
+                        
+                        char response[1024];
+                        snprintf(response, sizeof(response), "{\"response\": \"GET_USER\",\"code\": \"200\" , \"body\": \"\" }");
+                        send(new_socket, response, sizeof(response), 0);
+                    }
 
 
 
