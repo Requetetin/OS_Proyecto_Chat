@@ -27,9 +27,9 @@ struct client{
 
 struct message {
     char delivered[10] ;
-    char from[100];
-    char to[100];
-    char message[1024];
+    string from;
+    string to;
+    string message;
 
 };
 
@@ -44,14 +44,14 @@ void changeStatus(int id, int status ){
 
 void printClients(){    
     for (int j=0; j<clientscount;j++){
-        if( strcmp("", clients_list[j].name) !=0){
+        if( clients_list[j].name != ""){
         cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<endl;}
     }
 }
 
 void printMessages(){    
     for (int j=0; j<messagescount;j++){
-        if( strcmp("", messages_list[j].from) !=0){
+        if( messages_list[j].from!= ""){
         cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;}
     }
 }
@@ -62,7 +62,7 @@ void printMessages(){
 //Sirve para saber cual es el siguiente espacio disponible para mensajes 
 int getNextMessageIndex(){
     for (int j=0; j<messagescount;j++){
-        if(strcmp(messages_list[j].from, "")==0){
+        if(messages_list[j].from =""){
             return j;
         }
     }
@@ -73,7 +73,7 @@ int getNextMessageIndex(){
 //Sirve para saber cual es el siguiente espacio disponible para clientes 
 int getNextClientIndex(){
     for (int j=0; j<clientscount;j++){
-        if(strcmp(clients_list[j].name, "")==0){
+        if(clients_list[j].name == ""){
             return j;
         }
     }
@@ -127,10 +127,7 @@ int main(int argc, char const* argv[])
 		json j_request;
         j_request = json::parse(buffer);
         cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
-        ostringstream ss;
-        ss<<j_request["body"][1];
-        string strOut =ss.str();
-        clients_list[getNextClientIndex()].name = strOut.c_str();
+        clients_list[getNextClientIndex()].name = j_request["body"][1];
 
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
