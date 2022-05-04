@@ -112,7 +112,7 @@ int main(int argc , char *argv[])
         exit(EXIT_FAILURE);  
     }  
      
-    /
+    
     if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, 
           sizeof(opt)) < 0 )  
     {  
