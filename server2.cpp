@@ -20,7 +20,7 @@ using namespace std;
 
 struct client{
     int id;
-    char name[25];
+    string name;
     int status;
     struct sockaddr_in address;
 };
