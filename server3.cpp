@@ -229,7 +229,7 @@ int main(int argc , char *argv[])
                     printf("Cliente se desconecto del chat, ip %s , port %d \n" , 
                           inet_ntoa(address.sin_addr) , ntohs(address.sin_port));  
                          
-                    //Libera el esacio del socket
+                    //Libera el espacio del socket
                     close( sd );  
                     client_socket[i] = 0;  
                 }  
@@ -282,7 +282,7 @@ int main(int argc , char *argv[])
                     //manejar la solicitud de actualizar el estado de un cliente
                     if (j_request["request"] == "PUT_STATUS") {
                         cout<<"Cambiar estado a " << j_request["body"]<< endl;
-                        changeStatus(j_request["body"]);
+                        //changeStatus(j_request["body"]);
                         char response[1024];
                         snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
                         send(new_socket, response, sizeof(response), 0);
