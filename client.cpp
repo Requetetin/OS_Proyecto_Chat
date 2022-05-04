@@ -7,6 +7,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <string>
+#include <iostream>
 
 #include "json.hpp"
 #include <iomanip>
@@ -36,6 +37,10 @@ void getChats() {
 	send(sock, request_chat, sizeof(request_chat), 0);
 	read(sock, response, 1024);
 	json j_response = json::parse(response);
+	vector<vector<string>> messages = j_response["body"];
+	for (int i=0; i<messages.size(); i++) {
+		cout << messages[i][2] << "[" << messages[i][1] << "]: " << messages[i][0] << "\n";
+	}
 }
 
 void* inputs(void* args) {
@@ -62,7 +67,9 @@ void* outputs(void* args) {
 			end_flag = 0;
 			pthread_cancel(send_thread);
 			break;
-		} else {
+		} else if(strcmp(buffer, "") == 0) {
+			continue;
+		}else {
 			hour = time(NULL);
 			struct tm *ptm = localtime(&hour);
 			snprintf(message, sizeof(message), "{\"request\": \"POST_CHAT\", \"body\": [\"%s\", \"%s\", \"%02d:%02d\", \"%s\"]}", buffer, user, ptm->tm_hour, ptm->tm_min, recipient.c_str());
@@ -87,7 +94,39 @@ void requestUsers() {
 	send(sock, request_user, sizeof(request_user), 0);
 	read(sock, response, 1024);
 	json j_response = json::parse(response);
-	printf("%s\n", to_string(j_response["body"]).c_str());
+	int code;
+	code = atoi(to_string(j_response["code"]).c_str());
+	if (code == 102) {
+		printf("EL USUARIO NO ESTA CONECTADO\n");
+	} else {
+		if (recipient == "all") {
+			vector<vector<string>> users = j_response["body"];
+			for (int i=0; i<users.size(); i++) {
+				string status = users[i][1];
+				string s_status;
+				if (status == "0") {
+					s_status = "Activo";
+				} else if (status == "1") {
+					s_status = "Inactivo";
+				} else {
+					s_status = "Ocupado";
+				}
+				cout << users[i][0] << ": " << s_status << "\n";
+			}
+		} else {
+			int status = atoi(to_string(j_response["body"][0]).c_str());
+			string s_status;
+			if (status == 0) {
+				s_status = "Activo";
+			} else if (status == 1) {
+				s_status = "Inactivo";
+			} else {
+				s_status = "Ocupado";
+			}
+			printf("%s: %s\n", recipient.c_str(), s_status.c_str());
+		}
+		
+	}
 }
 
 int main (int argc, char* argv[]) {
@@ -130,6 +169,20 @@ int main (int argc, char* argv[]) {
 	
 	
 	send(sock, init_connect, strlen(init_connect), 0);
+	read(sock, response, 1024);
+	json j_response = json::parse(response);
+	int code = atoi(to_string(j_response["code"]).c_str());
+	if (code == 200) {	
+		printf("USER CONNECTED SUCCESFULLY\n");
+	} else {
+		if (code == 101) {
+			printf("USER ALREADY EXISTS\n");
+			return -1;
+		} else {
+			printf("USER FAILED TO CONNECT\n");
+			return -1;
+		}
+	}
 	//Menu
 	int selector_menu, new_state;
 	char state_change[1024];
@@ -162,7 +215,7 @@ int main (int argc, char* argv[]) {
 			recipient =  "all";
 			requestUsers();
 		} else if (selector_menu == 5) {
-			printf("Con que usuario se desea comunicar? ");
+			printf("Que usuario desea obtener? ");
 			scanf("%s", recipient.c_str());
 			requestUsers();
 		} else if (selector_menu == 6) {
