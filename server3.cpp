@@ -190,6 +190,10 @@ int main(int argc , char *argv[])
             json j_request;
             j_request = json::parse(buffer);
             cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+            int ix = getNextClientIndex();
+            clients_list[ix].name = j_request["body"][1];
+            clients_list[ix].status = 1;
+            printClients();
             
             //opcional
             if( send(new_socket, message, strlen(message), 0) != strlen(message) )  
@@ -252,7 +256,7 @@ int main(int argc , char *argv[])
                         }
                     char response[1024];
                     snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
-                    send(new_socket, response, sizeof(response), 0);
+                    send(sd, response, sizeof(response), 0);
 
                     }
 
@@ -273,7 +277,7 @@ int main(int argc , char *argv[])
                         printMessages();
                         char response[1024];
                         snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
-                        send(new_socket, response, sizeof(response), 0);
+                        send(sd, response, sizeof(response), 0);
                         //al mismo tiempo deberia enviarle al resto de clientes NEW MESSAGE
                         
 
@@ -285,7 +289,7 @@ int main(int argc , char *argv[])
                         //changeStatus(j_request["body"]);
                         char response[1024];
                         snprintf(response, sizeof(response), "{\"response\": \"PUT_STATUS\",\"code\": \"200\" }");
-                        send(new_socket, response, sizeof(response), 0);
+                        send(sd, response, sizeof(response), 0);
                     }
 
 
@@ -295,7 +299,7 @@ int main(int argc , char *argv[])
                         
                         char response[1024];
                         snprintf(response, sizeof(response), "{\"response\": \"GET_USER\",\"code\": \"200\" , \"body\": \"\" }");
-                        send(new_socket, response, sizeof(response), 0);
+                        send(sd, response, sizeof(response), 0);
                     }
 
 
