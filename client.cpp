@@ -35,6 +35,7 @@ void getChats() {
 	char request_chat[1024];
 	snprintf(request_chat, sizeof(request_chat), "{\"request\": \"GET_CHAT\", \"body\": \"%s\"}", recipient.c_str());
 	send(sock, request_chat, sizeof(request_chat), 0);
+	response[0] = "\0";
 	read(sock, response, 1024);
 	json j_response = json::parse(response);
 	vector<vector<string>> messages = j_response["body"];
@@ -46,6 +47,7 @@ void getChats() {
 void* inputs(void* args) {
 	json j_response;
 	while (end_flag) {
+		response[0] = "\0";
 		read(sock, response, 1024);
 		j_response = json::parse(response);
 		if (j_response["response"] == "NEW_MESSAGE") {
@@ -74,6 +76,8 @@ void* outputs(void* args) {
 			struct tm *ptm = localtime(&hour);
 			snprintf(message, sizeof(message), "{\"request\": \"POST_CHAT\", \"body\": [\"%s\", \"%s\", \"%02d:%02d\", \"%s\"]}", buffer, user, ptm->tm_hour, ptm->tm_min, recipient.c_str());
 			send(sock, message, sizeof(message), 0);
+			response[0] = "\0";
+			read(sock, response, 1024);
 		}
 	}
 	pthread_exit(NULL);
@@ -92,6 +96,7 @@ void requestUsers() {
 	char request_user[1024];
 	snprintf(request_user, sizeof(request_user), "{\"request\": \"GET_USER\", \"body\": \"%s\"}", recipient.c_str());
 	send(sock, request_user, sizeof(request_user), 0);
+	response[0] = "\0";
 	read(sock, response, 1024);
 	json j_response = json::parse(response);
 	int code;
@@ -169,6 +174,7 @@ int main (int argc, char* argv[]) {
 	
 	
 	send(sock, init_connect, strlen(init_connect), 0);
+	response[0] = "\0";
 	read(sock, response, 1024);
 	json j_response = json::parse(response);
 	int code = atoi(to_string(j_response["code"]).c_str());
@@ -211,6 +217,8 @@ int main (int argc, char* argv[]) {
 			scanf("%d", &new_state);
 			snprintf(state_change, sizeof(state_change), "{\"request\": \"PUT_STATUS\", \"body\": \"%d\"}", new_state);
 			send(sock, state_change, sizeof(state_change), 0);
+			response[0] = "\0";
+			read(sock, response, 1024);
 		} else if (selector_menu == 4) {
 			recipient =  "all";
 			requestUsers();
