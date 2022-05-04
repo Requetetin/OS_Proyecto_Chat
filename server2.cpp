@@ -19,14 +19,12 @@ using json = nlohmann::json;
 using namespace std;
 
 struct client{
-    int id;
     string name;
     int status;
-    struct sockaddr_in address;
 };
 
 struct message {
-    char delivered[10] ;
+    string delivered;
     string from;
     string to;
     string message;
@@ -45,7 +43,7 @@ void changeStatus(int id, int status ){
 void printClients(){    
     for (int j=0; j<clientscount;j++){
         if( clients_list[j].name != ""){
-        cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<endl;}
+        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;}
     }
 }
 
@@ -163,11 +161,11 @@ int main(int argc, char const* argv[])
                 cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
                 cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
                 cout<<"destinatario del mensaje : "<< j_request["body"][3]<<endl;
-                //messages_list[next].message = strcpy(bodymessagechar, bodymessage.c_str());
-                //messages_list[next].from = j_request["body"][1];
-                //messages_list[next].delivered = j_request["body"][2];
-                //messages_list[next].to = j_request["body"][3];
-
+                messages_list[next].message = j_request["body"][0];
+                messages_list[next].from = j_request["body"][1];
+                messages_list[next].delivered = j_request["body"][2];
+                messages_list[next].to = j_request["body"][3];
+                printMessages();
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
