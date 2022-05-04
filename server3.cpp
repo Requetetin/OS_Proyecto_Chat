@@ -151,7 +151,7 @@ int main(int argc , char *argv[])
                     printf("Message connect: %s", buffer);
                     json j_request;
                     j_request = json::parse(buffer);
-                    cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
+                    std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
                     printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
