@@ -47,6 +47,17 @@ void printClients(){
         cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<endl;}
     }
 }
+
+void printMessages(){    
+    for (int j=0; j<messagescount;j++){
+        if( strcmp("", messages_list[j].from) !=0){
+        cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;}
+    }
+}
+
+
+
+
 //Sirve para saber cual es el siguiente espacio disponible para mensajes 
 int getNextMessageIndex(){
     for (int j=0; j<messagescount;j++){
@@ -129,7 +140,7 @@ int main(int argc, char const* argv[])
                 cout<<"remitente mensaje : "<< j_request["body"][1]<<endl;
                 cout<<"fecha del mensaje : "<< j_request["body"][2]<<endl;
                 cout<<"destinatario del mensaje : "<< j_request["body"][3]<<endl;
-                //messages_list[next].message = bodymessage;
+                messages_list[next].message = bodymessage;
                 //messages_list[next].from = j_request["body"][1];
                 //messages_list[next].delivered = j_request["body"][2];
                 //messages_list[next].to = j_request["body"][3];
