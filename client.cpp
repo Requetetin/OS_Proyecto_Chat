@@ -7,6 +7,8 @@
 #include <time.h>
 #include <pthread.h>
 #include <string>
+#include <iostream>
+#include <atomic>
 
 #include "json.hpp"
 #include <iomanip>
@@ -18,6 +20,7 @@ int sock, end_flag;
 char* user;
 pthread_t send_thread, rec_thread;
 string recipient;
+char response[1024];
 
 void trim_string(char* arr, int length) {
 	int i;
@@ -30,23 +33,28 @@ void trim_string(char* arr, int length) {
 }
 
 void* inputs(void* args) {
+	json j_response;
 	while (end_flag) {
-	
+		recv(sock, response, 1024, 0);
+		j_response = json::parse(response);
+		if (j_response["response"] == "NEW_MESSAGE") {
+			printf("%s [%s]: %s", to_string(j_response["body"][2]).c_str(), to_string(j_response["body"][1]).c_str(), to_string(j_response["body"][0]).c_str());
+		} 
 	}
-	pthread_exit(NULL);
 }
 
 void* outputs(void* args) {
 	char buffer[1024] = {};
 	time_t hour;
 	char message[1024];
-	
+	cin.clear();
 	while (1) {
 		printf("Enter a message: ");
 		fgets(buffer, 1024, stdin);
 		trim_string(buffer, 1024);
 		if (strcmp(buffer, "back") == 0) {
 			end_flag = 0;
+			pthread_cancel(rec_thread);
 			break;
 		} else {
 			hour = time(NULL);
@@ -61,15 +69,17 @@ void* outputs(void* args) {
 void startThreads() {
 	end_flag = 1;
 	pthread_create(&send_thread, NULL, inputs, NULL);
-	pthread_join(send_thread, NULL);
 	pthread_create(&rec_thread, NULL, outputs, NULL);
-	pthread_join(rec_thread, NULL);
+	pthread_join(send_thread, NULL);
 }
 
 void requestUsers() {
 	char request_user[1024];
 	snprintf(request_user, sizeof(request_user), "{\"request\": \"GET_USER\", \"body\": \"%s\"}", recipient.c_str());
 	send(sock, request_user, sizeof(request_user), 0);
+	read(sock, response, 1024);
+	json j_response = json::parse(response);
+	printf("%s\n", to_string(j_response["body"]).c_str());
 }
 
 int main (int argc, char* argv[]) {
@@ -109,14 +119,6 @@ int main (int argc, char* argv[]) {
 		printf("\nConnection Failed\n");
 		return -1;
 	}
-	/* //Implementation by geeks for geeks, single message
-	send(sock, hello, strlen(hello), 0);
-	printf("Hello message sent\n");
-	valread = read(sock, buffer, 1024);
-	printf("%s\n", buffer);
-	return 0;
-	*/
-	// Implementation by medium. Multiple messages
 	
 	
 	send(sock, init_connect, strlen(init_connect), 0);
@@ -156,7 +158,17 @@ int main (int argc, char* argv[]) {
 			scanf("%s", recipient.c_str());
 			requestUsers();
 		} else if (selector_menu == 6) {
-		
+			printf("************************************\n");
+			printf("Instrucciones\n");
+			printf("Presione los numeros para acceder a la funcion deseada\n");
+			printf("Si se encuentra en un chat escriba \"back\" para regresar al menu\n\n");
+			printf("************************************\n");
+			printf("Codigos de error\n");
+			printf("101: Usuario ya registrado\n");
+			printf("102: Usuario no conectado\n");
+			printf("103: No hay usuarios conectados\n");
+			printf("104: El estatus no se pudo modificar\n");
+			printf("105: Error inesperado del server\n");
 		} else if (selector_menu == 7) {
 			char exit_connect[1024] = "{\"request\": \"END_CONEX\"}";
 			send(sock, exit_connect, sizeof(buffer), 0);
