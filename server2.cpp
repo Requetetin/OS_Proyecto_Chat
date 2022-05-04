@@ -24,10 +24,10 @@ struct client{
 };
 
 struct message {
-    bool isprivate; 
-    char sender[100];
-    char receiver[100];
-    char content[1024];
+    char delivered[10] 
+    char from[100];
+    char to[100];
+    char message[1024];
 
 };
 
@@ -46,7 +46,15 @@ void printClients(){
         std::cout<< "- "<< clients_list[j].id << "-"<< clients_list[j].name <<"status : "<< clients_list[j].status <<std::endl;}
     }
 }
+//Sirve para saber cual es el siguiente espacio disponible para mensajes 
+int getNextMessageIndex(){
+    for (int j=0; j<messagescount;j++){
+        if(strcmp(messages_list[j].from, "")==0){
+            return j;
+        }
+    }
 
+}
 
 int main(int argc, char const* argv[])
 {
@@ -113,6 +121,13 @@ int main(int argc, char const* argv[])
             if (j_request["request"] == "POST_CHAT") {
                 std::cout<<"POSTEAR en chat general" << j_request["body"]<< std::endl;
                // if(j_request["body"])
+                int next;
+                next= getNextMessageIndex();
+                messages_list[next].message = j_request["body"][0];
+                messages_list[next].from = j_request["body"][1];
+                messages_list[next].delivered = j_request["body"][2];
+                messages_list[next].to = j_request["body"][3];
+
                 char response[1024];
                 snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
                 send(new_socket, response, sizeof(response), 0);
