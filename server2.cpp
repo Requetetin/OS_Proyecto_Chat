@@ -109,6 +109,7 @@ int main(int argc, char const* argv[])
         while (read(new_socket, buffer, 1024) > 0) {
 			printf("Message received: %s\n", buffer);
             j_request = json::parse(buffer);
+            //MAneja la respuesta de solicitar chats 
             if (j_request["request"] == "GET_CHAT") {
                 if(j_request["body"] =="all"){
                     std::cout<<"Mostrar chat general" <<std::endl;
@@ -116,8 +117,9 @@ int main(int argc, char const* argv[])
                     std::cout<<"Mostrar chat de "<<j_request["body"] <<std::endl;
 
                 }
-                
-
+            char response[1024];
+            snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+            send(new_socket, response, sizeof(response), 0);
 
             }
 		}
