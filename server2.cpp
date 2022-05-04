@@ -144,6 +144,16 @@ int main(int argc, char const* argv[])
                 send(new_socket, response, sizeof(response), 0);
             }
 
+            
+            //manejar solicitud de estado de usuarios
+            if (j_request["request"] == "GET_USER") {
+                cout<<"Mostrar usuario " << j_request["body"]<< endl;
+               
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"GET_USER\",\"code\": \"200\" , \"body\": \"\" }");
+                send(new_socket, response, sizeof(response), 0);
+            }
+
 		}
 		exit(0);
 	}
