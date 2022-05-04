@@ -87,21 +87,7 @@ int main(int argc, char const* argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    /*//Implementacion de geeks for geeks. Un solo mensaje
-    if ((new_socket
-         = accept(server_fd, (struct sockaddr*)&address,
-                  (socklen_t*)&addrlen))
-        < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
-    valread = read(new_socket, buffer, 1024);
-    printf("%s\n", buffer);
-    send(new_socket, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    return 0;*/
-     //Implementacion de medium. Multiple messages
-    //printf("Hello message sent\n");
+    
 	while(new_socket = accept(server_fd, (struct sockaddr*)NULL, NULL)) {
 		read(new_socket, buffer, 1024);
 		printf("Message connect: %s", buffer);
@@ -122,6 +108,16 @@ int main(int argc, char const* argv[])
             send(new_socket, response, sizeof(response), 0);
 
             }
+
+            //Manejar la solicitud de postear un mensaje 
+            if (j_request["request"] == "POST_CHAT") {
+                std::cout<<"POSTEAR en chat general" << j_request["body"]<< std::endl;
+               // if(j_request["body"])
+                char response[1024];
+                snprintf(response, sizeof(response), "{\"response\": \"POST_CHAT\",\"code\": \"200\" }");
+                send(new_socket, response, sizeof(response), 0);
+            }
+
 		}
 		exit(0);
 	}
