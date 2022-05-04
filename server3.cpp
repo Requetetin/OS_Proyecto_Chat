@@ -251,6 +251,7 @@ int main(int argc , char *argv[])
                 {  
                     //set the string terminating NULL byte on the end 
                     //of the data read 
+                    cout<<"ESta es la solicitud que esta recibiendo" <<buffer <<endl;
                     buffer[valread] = '\0';  
                     send(sd , buffer , strlen(buffer) , 0 );  
                 }  
