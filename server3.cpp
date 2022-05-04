@@ -19,7 +19,8 @@ using json = nlohmann::json;
 
 using namespace std;
 
-
+#define messagescount 100 
+#define clientscount 10
     
 #define TRUE 1
 #define FALSE 0
