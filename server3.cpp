@@ -236,7 +236,7 @@ int main(int argc , char *argv[])
                      
                 else 
                 {  
-                    /
+                    
                     //of the data read 
                     cout<<"ESta es la solicitud que esta recibiendo" <<buffer <<endl;
                     //Aqui se deben manejar las solicitudes.
