@@ -73,7 +73,7 @@ int main(int argc , char *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    printf("Listener on port %d \n", PORT);
+    //printf("Listener on port %d \n", PORT);
         
     //try to specify maximum of 3 pending connections for the master socket
     if (listen(master_socket, 3) < 0)
@@ -84,7 +84,7 @@ int main(int argc , char *argv[])
         
     //accept the incoming connection
     addrlen = sizeof(address);
-    puts("Waiting for connections ...");
+    //puts("Waiting for connections ...");
         
     while(TRUE)
     {
@@ -131,7 +131,7 @@ int main(int argc , char *argv[])
             }
             
             //inform user of socket number - used in send and receive commands
-            printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+            //printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
         
             //send new connection greeting message
             if( send(new_socket, message, strlen(message), 0) != strlen(message) )
@@ -139,7 +139,7 @@ int main(int argc , char *argv[])
                 perror("send");
             }
                 
-            puts("Welcome message sent successfully");
+            //puts("Welcome message sent successfully");
                 
             //add new socket to array of sockets
             for (i = 0; i < max_clients; i++)
@@ -153,7 +153,7 @@ int main(int argc , char *argv[])
                     json j_request;
                     j_request = json::parse(buffer);
                     //std::cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<std::endl;
-                    printf("Adding to list of sockets as %d\n" , i);
+                    //printf("Adding to list of sockets as %d\n" , i);
                         
                     break;
                 }
@@ -171,15 +171,7 @@ int main(int argc , char *argv[])
                 //incoming message
                 if ((valread = read( sd , buffer, 1024)) == 0)
                 {
-                    //Somebody disconnected , get his details and print
-                    getpeername(sd , (struct sockaddr*)&address , \
-                        (socklen_t*)&addrlen);
-                    printf("Host disconnected , ip %s , port %d \n" ,
-                        inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
-                        
-                    //Close the socket and mark as 0 in list for reuse
-                    close( sd );
-                    client_socket[i] = 0;
+                    printf("leyendo input de socket ");
                 }
 
                     
