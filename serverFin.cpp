@@ -57,13 +57,13 @@ void printClients(){
 
 string printMessages(){
     string concatenate;
-    concatenate = "["    
+    concatenate = "[" ;   
     for (int j=0; j<messagescount;j++){
         if( messages_list[j].from!= ""){
         cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;
         concatennate = concatenate + "["+ messages_list[j].message+ ","+ messages_list[j].from+"," +messages_list[j].delivered +"]"
     }
-    } concatenate = concatenate+ "]"
+    } concatenate = concatenate+ "]";
     return concatenate
 }
 
