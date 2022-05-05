@@ -61,7 +61,7 @@ string printMessages(){
     for (int j=0; j<messagescount;j++){
         if( messages_list[j].from!= ""){
         cout<< "-("<< messages_list[j].delivered << "):"<< messages_list[j].from <<" : "<< messages_list[j].message <<endl;
-        concatenate = concatenate + "["+ messages_list[j].message+ ","+ messages_list[j].from+"," +messages_list[j].delivered +"]"
+        concatenate = concatenate + "["+ messages_list[j].message+ ","+ messages_list[j].from+"," +messages_list[j].delivered +"]";
     }
     } concatenate = concatenate+ "]";
     return concatenate;
