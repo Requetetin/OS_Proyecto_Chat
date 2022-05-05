@@ -46,11 +46,16 @@ void changeStatus(int id, int status ){
 
 }
 
-void printClients(){    
+string printClients(){    
+    string concatenate;
+    concatenate = "["
     for (int j=0; j<clientscount;j++){
         if( clients_list[j].name != ""){
-        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;}
+        cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;
+        concatennate = concatenate + "["+ clients_list[j].message+ ","+ clients_list[j].from+"," +clients_list[j] +"]"
     }
+    } concatenate = concatenate + "]"
+    return concatenate;
 }
 
 void printMessages(){    
@@ -255,7 +260,7 @@ int main(int argc , char *argv[])
 
                         }
                     char response[1024];
-                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\" }");
+                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": \"\"  }");
                     send(new_socket, response, sizeof(response), 0);
 
                     }
