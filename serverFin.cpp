@@ -47,8 +47,6 @@ void changeStatus(int id, int status ){
 }
 
 void printClients(){    
-    
-    concatenate = "["
     for (int j=0; j<clientscount;j++){
         if( clients_list[j].name != ""){
         cout<< "- "<< clients_list[j].name <<" status : "<< clients_list[j].status <<endl;
