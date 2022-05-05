@@ -263,7 +263,7 @@ int main(int argc , char *argv[])
                         }
                     char response[1024];
                     string messages = printMessages();
-                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": %s }", to_string(messages));
+                    snprintf(response, sizeof(response), "{\"response\": \"GET_CHAT\",\"code\": \"200\", \"body\": %s }", messages.c_str());
                     send(new_socket, response, sizeof(response), 0);
 
                     }
