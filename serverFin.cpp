@@ -187,7 +187,7 @@ int main(int argc , char *argv[])
             j_request = json::parse(buffer);
             cout<<"deberia guardar este usuario a la lista : "<<j_request["body"][1]<<endl;
             char response[1024];
-            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": \"200\" }");
+            snprintf(response, sizeof(response), "{\"response\": \"INIT_CONEX\",\"code\": 200 }");
             cout<<  "ESTO RESPONDIO EL SERVIDOR: " <<response <<endl;
             send(new_socket, response, sizeof(response), 0);
             int ix = getNextClientIndex();
